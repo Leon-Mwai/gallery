@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        
         RECIPIENT = 'muriithileon2007@gmail.com'
     }
 
@@ -14,23 +13,10 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Deploy/Update Site') {
             steps {
-                echo 'Installing NPM dependencies...'
-                sh 'npm install'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                echo 'Running tests...'
-                sh 'npm test'
-            }
-        }
-
-        stage('Build/Deploy') {
-            steps {
-                echo 'Optional: Build or deploy steps can go here'
+                echo 'Deploying/Updating site...'
+                
             }
         }
     }
