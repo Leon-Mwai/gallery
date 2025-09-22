@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -12,6 +16,7 @@ pipeline {
         stage('Deploy/Update Site') {
             steps {
                 echo 'Simulating deploy/update site...'
+                
             }
         }
     }
@@ -19,19 +24,20 @@ pipeline {
     post {
         success {
             echo 'Pipeline succeeded!'
-            sh '''
-                curl -X POST -H 'Content-type: application/json' \
-                --data '{"text":"Jenkins job *Darkroom-pipeline* build #${BUILD_NUMBER} succeeded!"}' \
-                https://hooks.slack.com/services/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
-            '''
+            sh """
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"Jenkins job *${JOB_NAME}* build #${BUILD_NUMBER} succeeded! Link: ${BUILD_URL}"}' \
+            ${SLACK_WEBHOOK}
+            """
         }
+
         failure {
             echo 'Pipeline failed!'
-            sh '''
-                curl -X POST -H 'Content-type: application/json' \
-                --data '{"text":" Jenkins job *Darkroom-pipeline* build #${BUILD_NUMBER} failed!"}' \
-                https://hooks.slack.com/services/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
-            '''
+            sh """
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"Jenkins job *${JOB_NAME}* build #${BUILD_NUMBER} failed! Link: ${BUILD_URL}"}' \
+            ${SLACK_WEBHOOK}
+            """
         }
     }
 }
