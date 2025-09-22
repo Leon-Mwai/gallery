@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
+        SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
     }
 
     stages {
@@ -16,7 +16,6 @@ pipeline {
         stage('Deploy/Update Site') {
             steps {
                 echo 'Simulating deploy/update site...'
-                
             }
         }
     }
