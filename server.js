@@ -8,11 +8,15 @@ let index = require('./routes/index');
 let image = require('./routes/image');
 
 // connecting the database
-let mongodb_url = 'mongodb://localhost:27017/';
-let dbName = 'darkroom';
-mongoose.connect(`${mongodb_url}${dbName}`,{ useNewUrlParser: true , useUnifiedTopology: true }, (err)=>{
-    if (err) console.log(err)
-});
+const config = require('./_config');  // make sure path is correct
+
+const env = process.env.NODE_ENV || 'development';
+const mongoURI = config.mongoURI[env];
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => console.log('MongoDB connection error:', err));
+
 
 // test if the database has connected successfully
 let db = mongoose.connection;
