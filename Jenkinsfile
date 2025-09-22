@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     environment {
-        PORT = '5000' 
+        
+        RECIPIENT = 'muriithileon2007@gmail.com'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 echo 'Checking out code from Git...'
                 checkout scm
@@ -20,30 +21,30 @@ pipeline {
             }
         }
 
-        stage('Run Server') {
+        stage('Run Tests') {
             steps {
-                echo 'Starting the server in the background...'
-                sh 'nohup node server.js &'
+                echo 'Running tests...'
+                sh 'npm test'
             }
         }
 
-        stage('Test Server') {
+        stage('Build/Deploy') {
             steps {
-                echo 'Testing if server is running...'
-                sh '''
-                sleep 5
-                curl -s http://localhost:$PORT | grep "Darkroom" || (echo "Server test failed!" && exit 1)
-                '''
+                echo 'Optional: Build or deploy steps can go here'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully! '
+            echo 'Pipeline succeeded!'
         }
+
         failure {
-            echo 'Pipeline failed. Fix errors and try again.'
+            echo 'Pipeline failed!'
+            mail to: "${RECIPIENT}",
+                 subject: "Build failed in Jenkins: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "Check Jenkins console output for details: ${env.BUILD_URL}"
         }
     }
 }
