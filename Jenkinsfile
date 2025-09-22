@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        RECIPIENT = 'muriithileon2007@gmail.com'
+        SLACK_WEBHOOK = 'https://hooks.slack.com/services/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'
     }
 
     stages {
@@ -15,8 +15,7 @@ pipeline {
 
         stage('Deploy/Update Site') {
             steps {
-                echo 'Deploying/Updating site...'
-                
+                echo 'Simulating deploy/update site...'
             }
         }
     }
@@ -24,13 +23,22 @@ pipeline {
     post {
         success {
             echo 'Pipeline succeeded!'
+            sh """
+                curl -X POST -H 'Content-type: application/json' \
+                --data '{
+                    "text": "Jenkins job *${env.JOB_NAME}* build #${env.BUILD_NUMBER} succeeded!"
+                }' ${SLACK_WEBHOOK}
+            """
         }
 
         failure {
             echo 'Pipeline failed!'
-            mail to: "${RECIPIENT}",
-                 subject: "Build failed in Jenkins: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "Check Jenkins console output for details: ${env.BUILD_URL}"
+            sh """
+                curl -X POST -H 'Content-type: application/json' \
+                --data '{
+                    "text": "Jenkins job *${env.JOB_NAME}* build #${env.BUILD_NUMBER} failed. Check: ${env.BUILD_URL}"
+                }' ${SLACK_WEBHOOK}
+            """
         }
     }
 }
