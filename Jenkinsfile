@@ -21,8 +21,8 @@ HEAD
                 echo 'Simulating deploy/update site...'
                 
 
-                echo 'Running tests...'
-                sh 'pytest || true'  // milestone 3 tests (won’t break pipeline if tests fail)
+                echo 'Running tests...' 
+                sh 'pytest || true'  
             }
         }
 
