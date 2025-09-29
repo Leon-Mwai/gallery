@@ -1,28 +1,31 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "NodeJS"   
+    }
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-HEAD
                 echo 'Checking out code from Git...'
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/master']],
                           userRemoteConfigs: [[url: 'https://github.com/Leon-Mwai/gallery']]])
+            }
+        }
 
-                echo 'Building...'
-test
+        stage('Install') {
+            steps {
+                echo 'Installing dependencies...'
+                sh 'npm install'
             }
         }
 
         stage('Test') {
             steps {
-HEAD
-                echo 'Simulating deploy/update site...'
-                
-
-                echo 'Running tests...' 
-                sh 'pytest || true'  
+                echo 'Running Jest tests...'
+                sh 'npm test'
             }
         }
 
@@ -30,7 +33,6 @@ HEAD
             steps {
                 echo 'Deploying application...'
                 sh 'echo "Banner updated with milestone 3 changes!"'
->>>>>>> test
             }
         }
     }
@@ -48,21 +50,9 @@ HEAD
             echo 'Pipeline failed!'
             sh """
                 curl -X POST -H "Content-type: application/json" \
-                --data '{"text":"Jenkins job *Darkroom-pipeline* build #${BUILD_NUMBER} FAILED! 🔗 <${BUILD_URL}|View Job>"}' \
+                --data '{"text":" Jenkins job *Darkroom-pipeline* build #${BUILD_NUMBER} FAILED! 🔗 <${BUILD_URL}|View Job>"}' \
                 https://hooks.slack.com/services/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
             """
-            slackSend (
-                channel: '#jenkins-builds',
-                color: 'good',
-                message: "✅ Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' succeeded! (<${env.BUILD_URL}|Open>)"
-            )
-        }
-        failure {
-            slackSend (
-                channel: '#jenkins-builds',
-                color: 'danger',
-                message: "❌ Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' failed! (<${env.BUILD_URL}|Open>)"
-            )
         }
     }
 }
