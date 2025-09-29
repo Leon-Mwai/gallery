@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -7,38 +6,32 @@ const path = require('path');
 let index = require('./routes/index');
 let image = require('./routes/image');
 
-// connecting the database
-const config = require('./_config');  // make sure path is correct
-
+// MongoDB connection
 const env = process.env.NODE_ENV || 'development';
-const mongoURI = config.mongoURI[env];
+const mongoURI = process.env.MONGO_URI || require('./_config').mongoURI[env];
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.log('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch(err => console.log('❌ MongoDB connection error:', err));
 
-
-// Initializing the app
+// Initialize app
 const app = express();
-
 
 // View Engine
 app.set('view engine', 'ejs');
 
-// Set up the public folder;
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// body parser middleware
-app.use(express.json())
+// Body parser middleware
+app.use(express.json());
 
-
+// Routes
 app.use('/', index);
 app.use('/image', image);
 
-
-
- 
+// Render needs this: listen on process.env.PORT
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,() =>{
-    console.log(`Server is listening at http://localhost:${PORT}`)
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });

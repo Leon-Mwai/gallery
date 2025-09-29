@@ -1,10 +1,12 @@
-var config = {}
+var config = {};
 
-// Update to have your correct username and password
+
+const defaultURI = 'mongodb+srv://leonuser:1234@cluster0.3mpsuyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
 config.mongoURI = {
-    production: 'mongodb+srv://leonuser:1234@cluster0.3mpsuyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-    development: 'mongodb+srv://leonuser:1234@cluster0.3mpsuyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-    test: 'mongodb+srv://leonuser:1234@cluster0.3mpsuyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-}
+  production: process.env.MONGO_URI || defaultURI,
+  development: process.env.MONGO_URI || defaultURI,
+  test: process.env.MONGO_URI || defaultURI,
+};
 
 module.exports = config;
